@@ -1,5 +1,4 @@
 package com.employeePayRoll;
-
 import static org.junit.jupiter.api.Assertions.*;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -11,7 +10,6 @@ import java.util.stream.IntStream;
 public class NIOFileAPITest {
 	private static String HOME = System.getProperty("user.home");
 	private static String PLAY_WITH_NIO = "TempPlayGround";
-
 	/**
 	 * Usecase2 for file operations
 	 * 
@@ -45,5 +43,16 @@ public class NIOFileAPITest {
 		Files.newDirectoryStream(playPath).forEach(System.out::println);
 		Files.newDirectoryStream(playPath, path -> path.toFile().isFile() && path.toString().startsWith("temp"))
 				.forEach(System.out::println);
+	}
+	/**
+	 * UseCase 3 
+	 * WatchService
+	 * @throws IOException
+	 */
+	@Test
+	public void givenADirectory_WhenWatched_ListAllTheActivities() throws IOException {
+		Path dir = Paths.get(HOME +"/" + PLAY_WITH_NIO);
+		Files.list(dir).filter(Files::isRegularFile).forEach(System.out::println);
+		new JavaWatchService(dir).processEvents();
 	}
 }
