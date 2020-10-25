@@ -10,6 +10,7 @@ class EmployeeServiceTest {
 				new Employee(3, "Mark Zuckerberg", 300000) };
 		EmployeePayrollService eService = new EmployeePayrollService(Arrays.asList(arrayOfEmps));
 		eService.writeData(EmployeePayrollService.IOService.FILE_IO);
+		eService.printData(EmployeePayrollService.IOService.FILE_IO);
 		long result = eService.countEntries(EmployeePayrollService.IOService.FILE_IO);
 		assertEquals(3, result);
 	}

@@ -1,6 +1,9 @@
 package com.employeePayRoll;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
-
 public class EmployeePayrollService {
 	public enum IOService {
 		CONSOLE_IO, FILE_IO, DB_IO, REST_IO
@@ -41,5 +44,13 @@ public class EmployeePayrollService {
 		}
 		return entries;
 	}
+	/**
+	 * Usecase 5
+	 * @param ioService
+	 */
+	public void printData(IOService ioService) {
+		if (ioService.equals(IOService.FILE_IO)) {
+			new EmployeeFileService().printData();
+		}
+	}
 }
-
