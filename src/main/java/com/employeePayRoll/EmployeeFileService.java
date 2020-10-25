@@ -35,5 +35,29 @@ public class EmployeeFileService {
 			exception.printStackTrace();
 		}
 	}
+	/**Usecase 7
+	 * Read Data from a file
+	 * @return
+	 */
+	public List<Employee> readData() {
+		List<Employee> list = new ArrayList<Employee>();
+		try {
+			Files.lines(new File(PAYROLL_FILE_NAME).toPath()).map(line -> line.trim()).forEach(line -> {
+				String[] data = line.split("(, )");
+				String[] newData = new String[10];
+				int index = 0;
+				for (String d : data) {
+					String[] splitData = d.split("(=)");
+					newData[index] = splitData[1];
+					index++;
+				}
+				list.add(new Employee(Integer.parseInt(newData[0]), newData[1], Double.parseDouble(newData[2])));
+
+			});
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
 }
 

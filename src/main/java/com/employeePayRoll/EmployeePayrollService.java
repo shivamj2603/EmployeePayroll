@@ -5,11 +5,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 public class EmployeePayrollService {
+	static Scanner consoleInput = new Scanner(System.in);
 	public enum IOService {
 		CONSOLE_IO, FILE_IO, DB_IO, REST_IO
 	};
 	private List<Employee> employeeList;
-
 	public EmployeePayrollService(List<Employee> list) {
 		this.employeeList = list;
 	}
@@ -32,15 +32,21 @@ public class EmployeePayrollService {
 			new EmployeeFileService().writeData(employeeList);
 		}
 	}
-	public void readEmployeePayrollData(Scanner consoleInput) {
-		System.out.println("Enter the employee id");
-		int id = consoleInput.nextInt();
-		consoleInput.nextLine();
-		System.out.println("Enter the employee name");
-		String name = consoleInput.nextLine();
-		System.out.println("Enter the employee salary");
-		double salary = consoleInput.nextDouble();
-		employeeList.add(new Employee(id, name, salary));
+	public void readEmployeePayrollData(IOService ioService) {
+		List<Employee> list = new ArrayList<>();
+		if (ioService.equals(IOService.CONSOLE_IO)) {
+			System.out.println("Enter the employee id");
+			int id = consoleInput.nextInt();
+			consoleInput.nextLine();
+			System.out.println("Enter the employee name");
+			String name = consoleInput.nextLine();
+			System.out.println("Enter the employee salary");
+			double salary = consoleInput.nextDouble();
+			employeeList.add(new Employee(id, name, salary));
+		} else if (ioService.equals(IOService.FILE_IO)) {
+			list = new EmployeeFileService().readData();
+			System.out.println("Writing data from file" + list);
+		}
 	}
 	public void printData(IOService ioService) {
 		if (ioService.equals(IOService.FILE_IO)) {
