@@ -20,6 +20,11 @@ public class EmployeePayrollService {
 		eService.readEmployeePayrollData(consoleInput);
 		eService.writeData(IOService.CONSOLE_IO);
 	}
+	/**
+	 * Usecase 4
+	 * Write data to a file
+	 * @param ioService
+	 */
 	public void writeData(IOService ioService) {
 		if (ioService.equals(IOService.CONSOLE_IO))
 			System.out.println("Writting data of employee to console: " + employeeList);
