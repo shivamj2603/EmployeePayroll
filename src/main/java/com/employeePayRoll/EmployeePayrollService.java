@@ -42,20 +42,23 @@ public class EmployeePayrollService {
 		double salary = consoleInput.nextDouble();
 		employeeList.add(new Employee(id, name, salary));
 	}
+	public void printData(IOService ioService) {
+		if (ioService.equals(IOService.FILE_IO)) {
+			new EmployeeFileService().printData();
+		}
+	}
+	/**
+	 * Usecase 6
+	 * Print number of entries
+	 * @param ioService
+	 * @return
+	 */
 	public long countEntries(IOService ioService) {
 		long entries = 0;
 		if (ioService.equals(IOService.FILE_IO)) {
 			entries = new EmployeeFileService().countEntries();
 		}
+		System.out.println("No of Entries in File: " + entries);
 		return entries;
-	}
-	/**
-	 * Usecase 5
-	 * @param ioService
-	 */
-	public void printData(IOService ioService) {
-		if (ioService.equals(IOService.FILE_IO)) {
-			new EmployeeFileService().printData();
-		}
 	}
 }
