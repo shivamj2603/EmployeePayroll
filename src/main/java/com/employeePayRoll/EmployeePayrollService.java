@@ -57,6 +57,39 @@ public class EmployeePayrollService {
 		}
 		return list;
 	}
+	//Update Employee Records
+	public void updateEmployeeSalary(String name, double salary) {
+		int result = 0;
+		try {
+			result = new EmployeePayrollDBService().updateEmployeeData(name,salary);
+		} catch (DatabaseException exception) {
+			System.out.println(exception);
+		}
+		if(result == 0) return;
+		Employee employee = this.getEmployee(name);
+		if(employee != null) {
+			employee.salary = salary;
+		}
+	}
+	//Get the updated record of the employee
+	private Employee getEmployee(String name) {
+		Employee employee = this.employeeList.stream()
+				    .filter(employeeData -> employeeData.name.equals(name))
+				    .findFirst()
+				    .orElse(null);
+		return employee;
+	}
+	//check whether the updated record matches the record of database
+	public boolean checkEmployeeDataSync(String name) {
+		List<Employee> employees = null;
+		try {
+			employees = new EmployeePayrollDBService().getEmployeeData(name);
+		} catch (DatabaseException exception) {
+	
+			System.out.println(exception);
+		}
+		return employees.get(0).equals(getEmployee(name));
+	}
 	public void printData(IOService ioService) {
 		if (ioService.equals(IOService.FILE_IO)) {
 			new EmployeeFileService().printData();
