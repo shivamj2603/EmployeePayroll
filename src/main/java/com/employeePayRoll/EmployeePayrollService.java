@@ -16,8 +16,7 @@ public class EmployeePayrollService {
 	public static void main(String[] args) {
 		ArrayList<Employee> list = new ArrayList<Employee>();
 		EmployeePayrollService eService = new EmployeePayrollService(list);
-		Scanner consoleInput = new Scanner(System.in);
-		eService.readEmployeePayrollData(consoleInput);
+		eService.readEmployeePayrollData(IOService.FILE_IO);
 		eService.writeData(IOService.CONSOLE_IO);
 	}
 	/**

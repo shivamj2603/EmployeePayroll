@@ -12,7 +12,7 @@ public class Employee {
 	}
 	@Override
 	public String toString() {
-		return "name = " + name + ", id = " + id + ", salary = " + salary;
+		return "id = " + id + ", name = " + name + ", salary = " + salary;
 	}
 	
 }
