@@ -31,7 +31,7 @@ public class EmployeePayrollService {
 			new EmployeeFileService().writeData(employeeList);
 		}
 	}
-	public void readEmployeePayrollData(IOService ioService) {
+	public List<Employee> readEmployeePayrollData(IOService ioService) {
 		List<Employee> list = new ArrayList<>();
 		if (ioService.equals(IOService.CONSOLE_IO)) {
 			System.out.println("Enter the employee id");
@@ -44,8 +44,18 @@ public class EmployeePayrollService {
 			employeeList.add(new Employee(id, name, salary));
 		} else if (ioService.equals(IOService.FILE_IO)) {
 			list = new EmployeeFileService().readData();
-			System.out.println("Writing data from file" + list);
+			System.out.println("Reading data from file" + list);
 		}
+		//Reading Data from the Database
+		else if(ioService.equals(IOService.DB_IO)) {
+			try {
+				list = new EmployeePayrollDBService().readData();
+			} catch (DatabaseException exception) {
+				System.out.println(exception);
+			}
+			System.out.println("Reading data from database" + list);
+		}
+		return list;
 	}
 	public void printData(IOService ioService) {
 		if (ioService.equals(IOService.FILE_IO)) {
