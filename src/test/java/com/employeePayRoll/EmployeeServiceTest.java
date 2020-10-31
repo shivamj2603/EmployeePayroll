@@ -59,7 +59,9 @@ class EmployeeServiceTest {
 		List<Employee> employees = new ArrayList<>();
 		EmployeePayrollService eService = new EmployeePayrollService(employees);
 		employees = eService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
-		eService.updateEmployeeSalary("Terisa", 3000000);
+		eService.updateEmployeeSalary("Terisa", 5000000);
 		eService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
+		boolean result = eService.checkEmployeeDataSync("Terisa");
+		assertTrue(result);
 	}
 }

@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class EmployeePayrollDBService {
 	private Connection getConnection() throws DatabaseException {
@@ -63,14 +64,7 @@ public class EmployeePayrollDBService {
 		return 0;
 	}
 	public List<Employee> getEmployeeData(String name) throws DatabaseException{
-		List<Employee> employeeList = null;
-		for(Employee employee : readData()) {
-			if(employee.name.equals(name)) {
-				employeeList.add(employee);
-				break;
-			}
-		}
-		return employeeList;
+		return readData().stream().filter(employee -> employee.name.equals(name)).collect(Collectors.toList());
 	}
 	//Update records
 	public int updateEmployeeData(String name, double salary) throws DatabaseException {

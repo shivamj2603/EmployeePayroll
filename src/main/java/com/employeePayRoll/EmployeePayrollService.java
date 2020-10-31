@@ -55,6 +55,7 @@ public class EmployeePayrollService {
 			}
 			System.out.println("Reading data from database" + list);
 		}
+		this.employeeList = list;
 		return list;
 	}
 	//Update Employee Records
@@ -88,6 +89,8 @@ public class EmployeePayrollService {
 	
 			System.out.println(exception);
 		}
+		System.out.println(employees);
+		System.out.println(getEmployee(name));
 		return employees.get(0).equals(getEmployee(name));
 	}
 	public void printData(IOService ioService) {
