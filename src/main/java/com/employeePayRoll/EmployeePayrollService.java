@@ -101,6 +101,21 @@ public class EmployeePayrollService {
 	public List<Employee> getEmployeeByDate(LocalDate start, LocalDate end) throws DatabaseException {
 		return employeePayrollDBService.readDataForGivenDateRange(start, end);
 	}
+	public Map<String, Double> getEmployeeAverageByGender() throws DatabaseException{
+		return employeePayrollDBService.getEmployeesByFunction("AVG");
+	}
+	public Map<String, Double> getEmployeeSumByGender() throws DatabaseException{
+		return employeePayrollDBService.getEmployeesByFunction("SUM");
+	}
+	public Map<String, Double> getEmployeeMaximumSalaryByGender() throws DatabaseException{
+		return employeePayrollDBService.getEmployeesByFunction("MAX");
+	}
+	public Map<String, Double> getEmployeeMinimumSalaryByGender() throws DatabaseException{
+		return employeePayrollDBService.getEmployeesByFunction("MIN");
+	}
+	public Map<String, Double> getEmployeeCountByGender() throws DatabaseException{
+		return employeePayrollDBService.getEmployeesByFunction("COUNT");
+	}
 	public void printData(IOService ioService) {
 		if (ioService.equals(IOService.FILE_IO)) {
 			new EmployeeFileService().printData();

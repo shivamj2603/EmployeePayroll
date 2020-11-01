@@ -10,7 +10,9 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class EmployeePayrollDBService {
@@ -58,6 +60,24 @@ public class EmployeePayrollDBService {
 	public List<Employee> readDataForGivenDateRange(LocalDate start, LocalDate end) throws DatabaseException{
 		String sql = String.format("Select * from employee_payroll where start between '%s' and '%s' ;", Date.valueOf(start), Date.valueOf(end));
 	    return getEmployeeRecords(sql);
+	}
+	//get employee records by condition
+	public Map<String,Double> getEmployeesByFunction(String function) throws  DatabaseException{
+		Map<String,Double> employeeAverage = new HashMap<>();
+		String sql = String.format("Select gender, %s(salary) from employee_payroll group by gender ; ",function) ;
+		try {
+			Statement statement = getConnection().createStatement();
+			ResultSet result = statement.executeQuery(sql);
+			while(result.next()) {
+				String gender = result.getString(1);
+				Double salary = result.getDouble(2);
+				employeeAverage.put(gender, salary);
+			}
+		}
+		catch(SQLException exception) {
+			throw new DatabaseException("Unable to calculate");
+		}
+		return employeeAverage;
 	}
 	//Read all records satisfying a given query
 	private List<Employee> getEmployeeRecords(String sql) throws DatabaseException {
