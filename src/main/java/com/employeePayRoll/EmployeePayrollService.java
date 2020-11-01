@@ -13,7 +13,7 @@ public class EmployeePayrollService {
 	};
 	private List<Employee> employeeList;
 	public EmployeePayrollService() {
-		
+		employeePayrollDBService = EmployeePayrollDBService.getInstance();
 	}
 	public EmployeePayrollService(List<Employee> list) {
 		this.employeeList = list;
@@ -54,7 +54,7 @@ public class EmployeePayrollService {
 		//Reading Data from the Database
 		else if(ioService.equals(IOService.DB_IO)) {
 			try {
-				list = new EmployeePayrollDBService().readData();
+				list = employeePayrollDBService.readData();
 			} catch (DatabaseException exception) {
 				System.out.println(exception);
 			}
@@ -67,7 +67,7 @@ public class EmployeePayrollService {
 	public void updateEmployeeSalary(String name, double salary) throws SQLException {
 		int result = 0;
 		try {
-			result = new EmployeePayrollDBService().updateEmployeeData(name,salary);
+			result = employeePayrollDBService.updateEmployeeData(name,salary);
 		} catch (DatabaseException exception) {
 			System.out.println(exception);
 		}
@@ -89,7 +89,7 @@ public class EmployeePayrollService {
 	public boolean checkEmployeeDataSync(String name) {
 		List<Employee> employees = null;
 		try {
-			employees = new EmployeePayrollDBService().getEmployeeData(name);
+			employees = employeePayrollDBService.getEmployeeData(name);
 		}
 		catch (DatabaseException exception) {
 			System.out.println(exception);
