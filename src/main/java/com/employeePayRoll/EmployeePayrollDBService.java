@@ -1,5 +1,6 @@
 package com.employeePayRoll;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -24,6 +25,7 @@ public class EmployeePayrollDBService {
 		}
 		return employeePayrollDBService;
 	}
+	//Cached prepared Statement
 	private void getPreparedStatement() throws SQLException, DatabaseException {
 		Connection connection = this.getConnection();
 		if(preparedStatement == null) {
@@ -47,8 +49,18 @@ public class EmployeePayrollDBService {
 		}
 		return connection;
 	}
+	//read all records
 	public List<Employee> readData() throws DatabaseException {
 		String sql = "Select * from employee_payroll; ";
+		return getEmployeeRecords(sql);
+	}
+	//Read records for a given date range
+	public List<Employee> readDataForGivenDateRange(LocalDate start, LocalDate end) throws DatabaseException{
+		String sql = String.format("Select * from employee_payroll where start between '%s' and '%s' ;", Date.valueOf(start), Date.valueOf(end));
+	    return getEmployeeRecords(sql);
+	}
+	//Read all records satisfying a given query
+	private List<Employee> getEmployeeRecords(String sql) throws DatabaseException {
 		List<Employee> employeeData = new ArrayList<>();
 		try(Connection connection = this.getConnection();){
 			Statement statement = connection.createStatement();
@@ -63,6 +75,7 @@ public class EmployeePayrollDBService {
 		}
 		return employeeData;
 	}
+	//Update salary
 	private int updateEmployeeUsingPreparedStatement(String name, double salary) throws DatabaseException, SQLException {
 		Connection connection = this.getConnection();
 		String sql = "Update employee_payroll set salary = ? where name = ? ; " ; 
@@ -71,6 +84,7 @@ public class EmployeePayrollDBService {
 		prepareStatement.setDouble(1, salary);
 		return prepareStatement.executeUpdate();
 	}
+	//Get Employee Records for a given name
 	public List<Employee> getEmployeeData(String name) throws DatabaseException{
 		try {
 			getPreparedStatement();
@@ -84,6 +98,7 @@ public class EmployeePayrollDBService {
 	public int updateEmployeeData(String name, double salary) throws DatabaseException, SQLException {
 		return this.updateEmployeeUsingPreparedStatement(name, salary);
 	}
+	//Get the resultSet
 	public List<Employee> getEmployeeData(ResultSet result) throws DatabaseException{
 		List<Employee> employeeData = new ArrayList<Employee>();
 		try {
