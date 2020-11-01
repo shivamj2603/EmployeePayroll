@@ -3,13 +3,18 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.SQLException;
 import java.util.*;
 public class EmployeePayrollService {
+	static EmployeePayrollDBService employeePayrollDBService;
 	static Scanner consoleInput = new Scanner(System.in);
 	public enum IOService {
 		CONSOLE_IO, FILE_IO, DB_IO, REST_IO
 	};
 	private List<Employee> employeeList;
+	public EmployeePayrollService() {
+		
+	}
 	public EmployeePayrollService(List<Employee> list) {
 		this.employeeList = list;
 	}
@@ -54,12 +59,12 @@ public class EmployeePayrollService {
 				System.out.println(exception);
 			}
 			System.out.println("Reading data from database" + list);
+			this.employeeList = list;
 		}
-		this.employeeList = list;
 		return list;
 	}
 	//Update Employee Records
-	public void updateEmployeeSalary(String name, double salary) {
+	public void updateEmployeeSalary(String name, double salary) throws SQLException {
 		int result = 0;
 		try {
 			result = new EmployeePayrollDBService().updateEmployeeData(name,salary);
@@ -85,12 +90,10 @@ public class EmployeePayrollService {
 		List<Employee> employees = null;
 		try {
 			employees = new EmployeePayrollDBService().getEmployeeData(name);
-		} catch (DatabaseException exception) {
-	
+		}
+		catch (DatabaseException exception) {
 			System.out.println(exception);
 		}
-		System.out.println(employees);
-		System.out.println(getEmployee(name));
 		return employees.get(0).equals(getEmployee(name));
 	}
 	public void printData(IOService ioService) {
