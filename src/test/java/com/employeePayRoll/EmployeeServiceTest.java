@@ -2,6 +2,7 @@ package com.employeePayRoll;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -57,7 +58,7 @@ class EmployeeServiceTest {
 		assertEquals(3, employees.size());
 	}
 	@Test
-	public void givenDatabase_WhenUpdated_ShouldBeInSync() throws SQLException {
+	public void givenDatabase_WhenUpdated_ShouldBeInSync() throws DatabaseException {
 		List<Employee> employees = new ArrayList<>();
 		EmployeePayrollService eService = new EmployeePayrollService(employees);
 		employees = eService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
@@ -71,5 +72,15 @@ class EmployeeServiceTest {
 		EmployeePayrollService eService = new EmployeePayrollService();
 		employees = eService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
 		assertTrue(eService.checkEmployeeDataSync("Terisa"));
+	}
+	@Test
+	public void givenDateRange_WhenRetrieved_ShouldMatchEmployeeCount() throws DatabaseException {
+		List<Employee> employees = new ArrayList<>();
+		EmployeePayrollService eService = new EmployeePayrollService();
+		eService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
+		LocalDate start = LocalDate.of(2018, 01, 01);
+		LocalDate end = LocalDate.now();
+		employees = eService.getEmployeeByDate(start, end);
+		assertEquals(2, employees.size());
 	}
 }
