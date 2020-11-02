@@ -1,10 +1,14 @@
-package com.employeePayRoll;
+package com.test.employeepayroll;
 import static org.junit.jupiter.api.Assertions.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.junit.jupiter.api.Test;
+
+import employeepayroll.FileUtils;
+import employeepayroll.JavaWatchService;
+
 import java.util.stream.IntStream;
 
 public class NIOFileAPITest {

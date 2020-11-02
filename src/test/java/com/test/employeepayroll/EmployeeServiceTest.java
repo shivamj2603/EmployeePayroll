@@ -1,4 +1,4 @@
-package com.employeePayRoll;
+package com.test.employeepayroll;
 import static org.junit.jupiter.api.Assertions.*;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+
+import employeepayroll.DatabaseException;
+import employeepayroll.Employee;
+import employeepayroll.EmployeePayrollService;
 
 class EmployeeServiceTest {
 	@Test

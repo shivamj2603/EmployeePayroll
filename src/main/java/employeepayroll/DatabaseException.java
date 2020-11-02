@@ -1,4 +1,4 @@
-package com.employeePayRoll;
+package employeepayroll;
 
 public class DatabaseException extends Exception {
 	public DatabaseException(String message)
