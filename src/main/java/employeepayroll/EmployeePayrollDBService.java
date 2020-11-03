@@ -227,6 +227,15 @@ public class EmployeePayrollDBService {
 		}
 		return employee;
 	}
+	public List<Employee> removeEmployeeFromCompany(int id) throws DatabaseException {
+		List<Employee> Employees = this.readData();
+		Employees.forEach(employee -> {
+			if (employee.id == id) {
+				employee.is_active = false;
+			}
+		});
+		return Employees;
+	}
 	//Delete employee from the payroll
 	public void deleteEmployee(String name) throws DatabaseException {
 		String sql = String.format("DELETE from employee_payroll where name = '%s';", name);
