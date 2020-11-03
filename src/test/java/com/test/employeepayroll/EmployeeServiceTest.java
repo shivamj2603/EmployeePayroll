@@ -126,4 +126,11 @@ class EmployeeServiceTest {
 		boolean result = employeePayrollService.checkEmployeeDataSync("Mark");
 		assertEquals(true, result);
 	}
+	@Test
+	public void givenEmployeeDB_WhenAnEmployeeIsDeleted_ShouldSyncWithDB() throws DatabaseException {
+		EmployeePayrollService employeeService = new EmployeePayrollService();
+		employeeService.readEmployeePayrollData(IOService.DB_IO);
+		List<Employee> list = employeeService.deleteEmployee("Mark");
+		assertEquals(3, list.size());
+	}
 }
