@@ -122,7 +122,7 @@ class EmployeeServiceTest {
 	public void givenNewEmployee_WhenAdded_ShouldSyncWithDB() throws SQLException, DatabaseException {
 		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
 		employeePayrollService.readEmployeePayrollData(IOService.DB_IO);
-		employeePayrollService.addEmployeeToPayroll("Mark", "M", 5000000.0, LocalDate.now());
+		employeePayrollService.addEmployeeToPayrollAndDepartment("Mark", "M", 5000000.0, LocalDate.now(), "Marketing");
 		boolean result = employeePayrollService.checkEmployeeDataSync("Mark");
 		assertEquals(true, result);
 	}
@@ -137,7 +137,7 @@ class EmployeeServiceTest {
 	public void givenNewEmployee_WhenAddedToPayroll_ShouldBeAddedToDepartment() throws SQLException, DatabaseException {
 		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
 		employeePayrollService.readEmployeePayrollData(IOService.DB_IO);
-		employeePayrollService.addEmployeeToDepartment("Max", "M", 4000000.0, LocalDate.now(), "Sales");
+		employeePayrollService.addEmployeeToPayrollAndDepartment("Max", "M", 4000000.0, LocalDate.now(), "Sales");
 		boolean result = employeePayrollService.checkEmployeeDataSync("Max");
 		assertEquals(true, result);
 	}
