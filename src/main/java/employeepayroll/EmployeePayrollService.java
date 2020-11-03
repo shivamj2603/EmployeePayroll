@@ -117,8 +117,8 @@ public class EmployeePayrollService {
 		return employeePayrollDBService.getEmployeesByFunction("COUNT");
 	}
 	//Add Employee to Payroll
-	public void addEmployeeToPayroll(String name, String gender, double salary, LocalDate start) throws SQLException, DatabaseException {
-		this.employeeList.add(employeePayrollDBService.addEmployeeToPayroll(name, gender, salary, start));
+	public void addEmployeeToPayrollAndDepartment(String name, String gender, double salary, LocalDate start, String Department) throws SQLException, DatabaseException {
+		this.employeeList.add(employeePayrollDBService.addEmployeeToPayrollAndDepartment(name, gender, salary, start, Department));
 	}
 	public void printData(IOService ioService) {
 		if (ioService.equals(IOService.FILE_IO)) {
@@ -143,7 +143,4 @@ public class EmployeePayrollService {
 		employeePayrollDBService.deleteEmployee(name);
 		return readEmployeePayrollData(IOService.DB_IO);
 	}	
-	public void addEmployeeToDepartment(String name, String gender, double salary, LocalDate start, String department) throws SQLException, DatabaseException {
-		this.employeeList.add(employeePayrollDBService.addEmployeeToDepartment(name, gender, salary, start, department));
-	}
 }

@@ -154,7 +154,7 @@ public class EmployeePayrollDBService {
 		return employeeData;
 	}
 	//Add new Employee to Payroll
-	public Employee addEmployeeToPayroll(String name, String gender, double salary, LocalDate start) throws DatabaseException {
+	public Employee addEmployeeToPayrollAndDepartment(String name, String gender, double salary, LocalDate start, String department) throws DatabaseException, SQLException {
 		int employeeId = -1;
 		Connection connection = null;
 		Employee employee = null;
@@ -165,9 +165,9 @@ public class EmployeePayrollDBService {
 			e.printStackTrace();
 		}
 		try (Statement statement = connection.createStatement()) {
-			String sql = String.format("INSERT INTO employee_payroll (name, gender, salary, start) "
+			String sql = String.format("INSERT INTO employee_payroll_service (name, gender, salary, start) "
 					+ "VALUES ('%s','%s','%s','%s')", name, gender, salary, Date.valueOf(start));
-			int rowAffected = statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
+			int rowAffected = statement.executeUpdate(sql, statement.RETURN_GENERATED_KEYS);
 			if (rowAffected == 1) {
 				ResultSet resultSet = statement.getGeneratedKeys();
 				if (resultSet.next())
@@ -189,11 +189,8 @@ public class EmployeePayrollDBService {
 			String sql = String.format(
 					"INSERT INTO payroll_details (employee_id, basic_pay, deductions, taxable_pay, tax, net_pay) "
 							+ "VALUES ('%s','%s','%s','%s','%s','%s')",
-							employeeId, salary, deductions, taxable_pay, tax, netPay);
-			int rowAffected = statement.executeUpdate(sql);
-			if (rowAffected == 1) {
-				employee = new Employee(employeeId, name, gender, salary, start);
-			}
+					employeeId, salary, deductions, taxable_pay, tax, netPay);
+			statement.executeUpdate(sql);
 		} catch (SQLException e) {
 			try {
 				connection.rollback();
@@ -202,36 +199,31 @@ public class EmployeePayrollDBService {
 			}
 			throw new DatabaseException("Unable to add payroll details of  employee");
 		}
-		try {
-			connection.commit();
-		} catch (SQLException exception) {
-			exception.printStackTrace();
-		} finally {
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (SQLException e) {
-					throw new DatabaseException("Unable to add employee");
-				}
-			}
-		}
-		return employee;
-	}
-	//Add Employee to the department
-	public Employee addEmployeeToDepartment(String name, String gender, double salary, LocalDate start,
-			String department) throws DatabaseException {
-		Employee employee = addEmployeeToPayroll(name, gender, salary, start);
-		String sql = String.format(
-				"INSERT INTO department (employee_id,department_id, department_name) " + "VALUES ('%s','%s','%s')",
-				employee.id, 1, department);
-		try (Connection connection = this.getConnection()) {
-			Statement statement = connection.createStatement();
+		try (Statement statement = connection.createStatement()) {
+			String sql = String.format(
+					"INSERT INTO department (employee_id,department_id, department_name) "
+							+ "VALUES ('%s','%s','%s')",
+					employeeId,1, department);
 			int rowAffected = statement.executeUpdate(sql);
-			if (rowAffected == 1) {
-				employee = new Employee(employee.id, name, gender, salary, start, department);
+			if(rowAffected == 1) {
+				employee = new Employee(employeeId, name, gender, salary,start, department);
 			}
 		} catch (SQLException e) {
+			try {
+				connection.rollback();
+			} catch (SQLException exception) {
+				exception.printStackTrace();
+			}
 			throw new DatabaseException("Unable to add department details of  employee");
+		}
+		try {
+			connection.commit();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (connection != null) {
+				connection.close();
+			}
 		}
 		return employee;
 	}
