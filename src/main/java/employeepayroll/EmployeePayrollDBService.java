@@ -134,4 +134,25 @@ public class EmployeePayrollDBService {
 		}
 		return employeeData;
 	}
+	//Add new Employee to Payroll
+	public Employee addEmployeeToPayroll(String name, String gender, double salary, LocalDate start) throws DatabaseException {
+		int employeeId = -1;
+		Employee employee = null;
+		String sql = String.format(
+				"insert into employee_payroll (name, gender, salary, start) values ('%s', '%s', '%s', '%s')", name,
+				gender, salary, Date.valueOf(start));
+		try (Connection connection = this.getConnection()) {
+			Statement statement = connection.createStatement();
+			int rowAffected = statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
+			if (rowAffected == 1) {
+				ResultSet resultSet = statement.getGeneratedKeys();
+				if (resultSet.next())
+					employeeId = resultSet.getInt(1);
+			}
+			employee = new Employee(employeeId, name, gender, salary, start);
+		} catch (SQLException exception) {
+			throw new DatabaseException("Unable to add to database");
+		}
+		return employee;
+	}
 }

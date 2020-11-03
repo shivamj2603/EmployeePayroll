@@ -6,6 +6,7 @@ public class Employee {
 	public int id;
 	public double salary;
 	public LocalDate start;
+	public String gender;
 	public Employee(int id, String name, double salary) {
 		this.name = name;
 		this.id = id;
@@ -14,6 +15,10 @@ public class Employee {
 	public Employee(int id, String name, double salary, LocalDate start) {
 		this(id, name, salary);
 		this.start = start;
+	}
+	public Employee(int id, String name, String gender, double salary, LocalDate start) {
+		this(id, name, salary, start);
+		this.gender = gender;
 	}
 	@Override
 	public String toString() {
