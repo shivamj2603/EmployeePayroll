@@ -146,7 +146,7 @@ public class EmployeePayrollDBService {
 			e.printStackTrace();
 		}
 		try (Statement statement = connection.createStatement()) {
-			String sql = String.format("INSERT INTO employee_payroll_service (name, gender, salary, start) "
+			String sql = String.format("INSERT INTO employee_payroll (name, gender, salary, start) "
 					+ "VALUES ('%s','%s','%s','%s')", name, gender, salary, Date.valueOf(start));
 			int rowAffected = statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
 			if (rowAffected == 1) {
@@ -197,5 +197,15 @@ public class EmployeePayrollDBService {
 			}
 		}
 		return employee;
+	}
+	public void deleteEmployee(String name) throws DatabaseException {
+		String sql = String.format("DELETE from employee_payroll where name = '%s';", name);
+		try {
+			Connection connection = this.getConnection();
+			Statement statement = connection.createStatement();
+			statement.executeUpdate(sql);
+		} catch (SQLException exception) {
+			throw new DatabaseException("Unable to delete data");
+		}
 	}
 }

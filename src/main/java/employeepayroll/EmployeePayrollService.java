@@ -138,5 +138,9 @@ public class EmployeePayrollService {
 		}
 		System.out.println("No of Entries in File: " + entries);
 		return entries;
+	}
+	public List<Employee> deleteEmployee(String name) throws DatabaseException {
+		employeePayrollDBService.deleteEmployee(name);
+		return readEmployeePayrollData(IOService.DB_IO);
 	}		
 }
