@@ -53,12 +53,31 @@ public class EmployeePayrollDBService {
 	}
 	//read all records
 	public List<Employee> readData() throws DatabaseException {
-		String sql = "Select * from employee_payroll; ";
-		return getEmployeeRecords(sql);
+		String sql = "Select * from employee_payroll inner join department on employee_payroll_service.id = department.employee_id; ";
+		return this.getEmployeePayrollAndDeparmentData(sql);
+	}
+		private List<Employee> getEmployeePayrollAndDeparmentData(String sql) throws DatabaseException {
+			List<Employee> employeePayrollList = new ArrayList<>();
+			try (Connection connection = this.getConnection()) {
+				Statement statement = connection.createStatement();
+				ResultSet resultSet = statement.executeQuery(sql);
+				while (resultSet.next()) {
+					int id = resultSet.getInt("id");
+					String name = resultSet.getString("name");
+					String gender = resultSet.getString("gender");
+					double salary = resultSet.getDouble("salary");
+					LocalDate start = resultSet.getDate("start").toLocalDate();
+					String department = resultSet.getString("department_name");
+					employeePayrollList.add(new Employee(id, name, gender, salary, start,department));
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			return employeePayrollList;		
 	}
 	//Read records for a given date range
 	public List<Employee> readDataForGivenDateRange(LocalDate start, LocalDate end) throws DatabaseException{
-		String sql = String.format("Select * from employee_payroll where start between '%s' and '%s' ;", Date.valueOf(start), Date.valueOf(end));
+		String sql = String.format("Select * from employee_payroll inner join department on employee_payroll_service.id = department.employee_id where start between '%s' and '%s' ;", Date.valueOf(start), Date.valueOf(end));
 	    return getEmployeeRecords(sql);
 	}
 	//get employee records by condition
