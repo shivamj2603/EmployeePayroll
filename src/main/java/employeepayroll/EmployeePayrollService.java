@@ -142,5 +142,8 @@ public class EmployeePayrollService {
 	public List<Employee> deleteEmployee(String name) throws DatabaseException {
 		employeePayrollDBService.deleteEmployee(name);
 		return readEmployeePayrollData(IOService.DB_IO);
-	}		
+	}	
+	public void addEmployeeToDepartment(String name, String gender, double salary, LocalDate start, String department) throws SQLException, DatabaseException {
+		this.employeeList.add(employeePayrollDBService.addEmployeeToDepartment(name, gender, salary, start, department));
+	}
 }

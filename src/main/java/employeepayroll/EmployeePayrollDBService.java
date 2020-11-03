@@ -198,6 +198,25 @@ public class EmployeePayrollDBService {
 		}
 		return employee;
 	}
+	//Add Employee to the department
+	public Employee addEmployeeToDepartment(String name, String gender, double salary, LocalDate start,
+			String department) throws DatabaseException {
+		Employee employee = addEmployeeToPayroll(name, gender, salary, start);
+		String sql = String.format(
+				"INSERT INTO department (employee_id,department_id, department_name) " + "VALUES ('%s','%s','%s')",
+				employee.id, 1, department);
+		try (Connection connection = this.getConnection()) {
+			Statement statement = connection.createStatement();
+			int rowAffected = statement.executeUpdate(sql);
+			if (rowAffected == 1) {
+				employee = new Employee(employee.id, name, gender, salary, start, department);
+			}
+		} catch (SQLException e) {
+			throw new DatabaseException("Unable to add department details of  employee");
+		}
+		return employee;
+	}
+	//Delete employee from the payroll
 	public void deleteEmployee(String name) throws DatabaseException {
 		String sql = String.format("DELETE from employee_payroll where name = '%s';", name);
 		try {
