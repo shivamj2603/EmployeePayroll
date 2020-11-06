@@ -195,7 +195,7 @@ class EmployeeServiceTest {
 		boolean result = employeePayrollService.checkEmployeeListSync(Arrays.asList("Bill Gates,Mukesh"));
 		assertEquals(true,result);
 	}
-	@Before
+	@BeforeEach
 	public void setup() {
 		RestAssured.baseURI = "http://localhost";
 		RestAssured.port = 3000;
@@ -226,5 +226,32 @@ class EmployeeServiceTest {
 		eService.addEmployeeToPayroll(employee);
 		long count = eService.countEntries(IOService.REST_IO);
 		assertEquals(3,count);	
+	}
+	@Test
+	public void givenListOfNewEmployee_WhenAdded_ShouldMatch201ResponseAndCount() {
+		Employee[] arrayOfEmp = getEmployeeList();
+		EmployeePayrollService eService = new EmployeePayrollService(Arrays.asList(arrayOfEmp));
+		Employee[] arrayOfEmployee = { new Employee(231, "Larry", "M", 6000000.0, LocalDate.now()),
+				new Employee(123, "Steve","M", 7000000.0, LocalDate.now()),
+				new Employee(246, "Ross","M", 5000000.0, LocalDate.now()) };
+		List<Employee> employeeList = Arrays.asList(arrayOfEmployee);
+		employeeList.forEach(employee -> {
+			Runnable task = () -> {
+				Response response = addEmployeeToJsonServer(employee);
+				int statusCode = response.getStatusCode();
+				assertEquals(201, statusCode);
+				Employee newEmployee = new Gson().fromJson(response.asString(), Employee.class);
+				eService.addEmployeeToPayroll(newEmployee);
+			};
+			Thread thread = new Thread(task, employee.name);
+			thread.start();
+			try {
+				thread.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		});
+		long count = eService.countEntries(IOService.REST_IO);
+		assertEquals(8, count);
 	}
 }
