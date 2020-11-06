@@ -1,6 +1,8 @@
 package com.test.employeepayroll;
 import static org.junit.jupiter.api.Assertions.*;
 import java.sql.SQLException;
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -146,5 +148,22 @@ class EmployeeServiceTest {
 		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
 		List<Employee> ActiveEmployees = employeePayrollService.removeEmployeeFromPayroll(3);
 		assertEquals(3, ActiveEmployees.size());
+	}
+	@Test
+	public void given6Employees_WhenAddedToDB_ShouldMatchEmployeeEntries() throws DatabaseException {
+		Employee[] arrayOfEmp = { new Employee(1, "Jeff Bezos","M", 100000.0,LocalDate.now(),"Sales"),
+				new Employee(2, "Bill Gates","M", 200000.0,LocalDate.now(), "Marketing"),
+				new Employee(3, "Mark ","M", 150000.0,LocalDate.now(), "Technical"),
+				new Employee(4, "Sundar","M", 400000.0,LocalDate.now(), "Sales"),
+				new Employee(5, "Mukesh ","M", 4500000.0,LocalDate.now(),"Sales"),
+				new Employee(6, "Anil","M", 300000.0,LocalDate.now(), "Sales") };
+		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+		employeePayrollService.readEmployeePayrollData(IOService.DB_IO);
+		Instant start = Instant.now();
+		employeePayrollService.addEmployeesToPayroll(Arrays.asList(arrayOfEmp));
+		Instant end = Instant.now();
+		System.out.println("Duration without Thread: " + Duration.between(start, end));
+		long result = employeePayrollService.countEntries(IOService.DB_IO);
+		assertEquals(7, result);
 	}
 }
