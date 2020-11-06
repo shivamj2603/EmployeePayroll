@@ -1,5 +1,6 @@
 package employeepayroll;
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class Employee {
 	public String name;
@@ -45,5 +46,9 @@ public class Employee {
 			return false;
 		return true;
 	}	
+	@Override
+	public int hashCode() {
+		return Objects.hash(name, gender, salary, start);
+	}
 }
 

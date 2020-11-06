@@ -14,8 +14,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class EmployeePayrollDBService {
+	private static final Logger LOG = LogManager.getLogger(EmployeePayrollDBService.class); 
 	private PreparedStatement preparedStatement = null;
 	private static EmployeePayrollDBService employeePayrollDBService;
 	private static Connection connection = null;
@@ -29,28 +32,16 @@ public class EmployeePayrollDBService {
 		}
 		return employeePayrollDBService;
 	}
-	//Cached prepared Statement
-	private void getPreparedStatement() throws SQLException, DatabaseException {
-		this.getConnection();
-		if(preparedStatement == null) {
-			String sql = "Select * from employee_payroll where name = ?;";
-		preparedStatement = connection.prepareStatement(sql);
-		}
-	}
 	private synchronized Connection getConnection() throws DatabaseException {
-		connectionCounter++;
-		if(connection != null) {
-			return connection;
-		}
 		String jdbcurl = "jdbc:mysql://localhost:3306/payroll_service?useSSL=false";
 		String userName = "root";
 		String password = "Shivam99@";
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			System.out.println("Processing Thread: "+Thread.currentThread().getName()+
+			LOG.info("Processing Thread: "+ Thread.currentThread().getName() +
                     " Connecting to database with Id: "+connectionCounter);
 			connection = DriverManager.getConnection(jdbcurl, userName, password);
-			System.out.println("Processing Thread: "+Thread.currentThread().getName()+
+			LOG.info("Processing Thread: "+ Thread.currentThread().getName() +
                     " Connecting to database with Id: "+connectionCounter+" Connection is successfull!!"+connection);
 			String sql = "Select * from employee_payroll where name = ?;";
 			preparedStatement = connection.prepareStatement(sql);
@@ -133,11 +124,12 @@ public class EmployeePayrollDBService {
 		return prepareStatement.executeUpdate();
 	}
 	//Get Employee Records for a given name
-	public List<Employee> getEmployeeData(String name) throws DatabaseException{
-		try {
-			getPreparedStatement();
-			preparedStatement.setString(1,  name);
-			return getEmployeeData(preparedStatement.executeQuery());
+	public List<Employee> getEmployeeData(String name) throws DatabaseException {
+		String sql = String.format("SELECT * FROM employee_payroll_service WHERE name = '%s'",name);
+		try(Connection connection = this.getConnection()) {
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery(sql);
+			return getEmployeeData(resultSet);
 		} catch (DatabaseException | SQLException e) {
 			throw new DatabaseException("Unable to get results");
 		}
@@ -256,4 +248,60 @@ public class EmployeePayrollDBService {
 			throw new DatabaseException("Unable to delete data");
 		}
 	}
-}
+	public int updateEmployeePayrollData(String name, Double newSalary) throws DatabaseException, SQLException {
+		int employeeId = -1;
+		int result = 0;
+		double  salary = newSalary;
+		Connection connection = null;
+		try {
+			connection = this.getConnection();
+			connection.setAutoCommit(false);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		try (Statement statement = connection.createStatement()) {
+			String sql = String.format("Update employee_payroll_service set salary = %.2f where name = '%s';", salary,
+					name);
+			int rowAffected = statement.executeUpdate(sql, statement.RETURN_GENERATED_KEYS);
+			if (rowAffected == 1) {
+				ResultSet resultSet = statement.getGeneratedKeys();
+				if (resultSet.next())
+					employeeId = resultSet.getInt(1);
+			}
+		} catch (SQLException e) {
+			try {
+				connection.rollback();
+			} catch (SQLException exception) {
+				exception.printStackTrace();
+			}
+			throw new DatabaseException("Unable to update employee");
+		}
+		try (Statement statement = connection.createStatement()) {
+			double deductions = salary * 0.2;
+			double taxable_pay = salary - deductions;
+			double tax = taxable_pay * 0.1;
+			double netPay = salary - tax;
+			String sql = String.format(
+					"Update employee_payroll_service set basic_pay = %.2f, deductions = %.2f, taxable_pay = %.2f, tax = %.2f, net_pay = %.2f where name = '%s';",
+					salary, deductions, taxable_pay, tax, netPay, name);
+
+		} catch (SQLException e) {
+			try {
+				connection.rollback();
+			} catch (SQLException exception) {
+				exception.printStackTrace();
+			}
+			throw new DatabaseException("Unable to add payroll details of  employee");
+		}
+		try {
+			connection.commit();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (connection != null) {
+				connection.close();
+			}
+		}
+		return result;
+	}
+} 
