@@ -83,7 +83,7 @@ public class EmployeePayrollService {
 		}
 	}
 	//Get the updated record of the employee
-	private Employee getEmployee(String name) {
+	public Employee getEmployee(String name) {
 		Employee employee = this.employeeList.stream()
 				    .filter(employeeData -> employeeData.name.equals(name))
 				    .findFirst()
@@ -219,7 +219,7 @@ public class EmployeePayrollService {
 		}
 	}
 
-	private void updatePayrollDB(String name, Double salary) throws DatabaseException, SQLException {
+	public void updatePayrollDB(String name, Double salary) throws DatabaseException, SQLException {
 		int result = employeePayrollDBService.updateEmployeeData(name, salary);
 		if (result == 0)
 			return;
