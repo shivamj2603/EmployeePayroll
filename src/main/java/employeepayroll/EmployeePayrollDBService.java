@@ -19,6 +19,7 @@ public class EmployeePayrollDBService {
 	private PreparedStatement preparedStatement = null;
 	private static EmployeePayrollDBService employeePayrollDBService;
 	private static Connection connection = null;
+	private int connectionCounter = 0;
 	private EmployeePayrollDBService() {
 	}
 	//Singleton Object
@@ -36,7 +37,8 @@ public class EmployeePayrollDBService {
 		preparedStatement = connection.prepareStatement(sql);
 		}
 	}
-	private Connection getConnection() throws DatabaseException {
+	private synchronized Connection getConnection() throws DatabaseException {
+		connectionCounter++;
 		if(connection != null) {
 			return connection;
 		}
@@ -45,7 +47,11 @@ public class EmployeePayrollDBService {
 		String password = "Shivam99@";
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
+			System.out.println("Processing Thread: "+Thread.currentThread().getName()+
+                    " Connecting to database with Id: "+connectionCounter);
 			connection = DriverManager.getConnection(jdbcurl, userName, password);
+			System.out.println("Processing Thread: "+Thread.currentThread().getName()+
+                    " Connecting to database with Id: "+connectionCounter+" Connection is successfull!!"+connection);
 			String sql = "Select * from employee_payroll where name = ?;";
 			preparedStatement = connection.prepareStatement(sql);
 		}
