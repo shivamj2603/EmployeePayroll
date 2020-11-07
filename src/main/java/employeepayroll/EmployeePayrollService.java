@@ -6,9 +6,9 @@ import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 public class EmployeePayrollService {
 	private static final Logger LOG = LogManager.getLogger(EmployeePayrollDBService.class); 
 	static EmployeePayrollDBService employeePayrollDBService;
@@ -160,8 +160,8 @@ public class EmployeePayrollService {
 			System.out.println("Employee Being added: "+employee.name);
 			try {
 				this.addEmployeeToPayrollAndDepartment(employee.name,employee.gender,employee.salary,employee.start,employee.department);
-			} catch (SQLException | DatabaseException e) {
-				e.printStackTrace();
+			} catch (SQLException | DatabaseException exception) {
+				exception.printStackTrace();
 			}
 			System.out.println("Employee added: "+employee.name);
 		});
@@ -188,8 +188,8 @@ public class EmployeePayrollService {
 		while(employeeAdditionStatus.containsValue(false)) {
 			try {
 				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+			} catch (InterruptedException exception) {
+				exception.printStackTrace();
 			}
 		}
 	}
@@ -213,12 +213,11 @@ public class EmployeePayrollService {
 		while(employeeAdditionStatus.containsValue(false)) {
 			try {
 				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				e.printStackTrace();  
+			} catch (InterruptedException exception) {
+				exception.printStackTrace();  
 			}
 		}
 	}
-
 	public void updatePayrollDB(String name, Double salary) throws DatabaseException, SQLException {
 		int result = employeePayrollDBService.updateEmployeeData(name, salary);
 		if (result == 0)
@@ -227,7 +226,6 @@ public class EmployeePayrollService {
 		if (employee != null)
 			employee.salary = salary;
 	}
-
 	public boolean checkEmployeeListSync(List<String> nameList) throws DatabaseException {
 		List<Boolean> resultList = new ArrayList<>();
 		nameList.forEach(name -> {

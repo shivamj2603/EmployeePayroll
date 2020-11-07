@@ -228,6 +228,12 @@ public class EmployeePayrollDBService {
 		}
 		return employee;
 	}
+	/**
+	 * Function removes employee from active database
+	 * @param id
+	 * @return
+	 * @throws DatabaseException
+	 */
 	public List<Employee> removeEmployeeFromCompany(int id) throws DatabaseException {
 		List<Employee> Employees = this.readData();
 		Employees.forEach(employee -> {
@@ -248,6 +254,14 @@ public class EmployeePayrollDBService {
 			throw new DatabaseException("Unable to delete data");
 		}
 	}
+	/**
+	 * Function updates the employee payroll data
+	 * @param name
+	 * @param newSalary
+	 * @return
+	 * @throws DatabaseException
+	 * @throws SQLException
+	 */
 	public int updateEmployeePayrollData(String name, Double newSalary) throws DatabaseException, SQLException {
 		int employeeId = -1;
 		int result = 0;

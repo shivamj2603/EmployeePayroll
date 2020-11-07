@@ -289,5 +289,4 @@ class EmployeeServiceTest {
 		long count = eService.countEntries(IOService.REST_IO);
 		assertEquals(7,count);
 	}
-
 }
