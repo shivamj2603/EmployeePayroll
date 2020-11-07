@@ -75,15 +75,6 @@ class EmployeeServiceTest {
 		assertEquals(4, employees.size());
 	}
 	@Test
-	public void givenDatabase_WhenUpdated_ShouldBeInSync() throws DatabaseException {
-		List<Employee> employees = new ArrayList<>();
-		EmployeePayrollService eService = new EmployeePayrollService(employees);
-		employees = eService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
-		eService.updateEmployeeSalary("Terisa", 6000000);
-		boolean result = eService.checkEmployeeDataSync("Terisa");
-		assertTrue(result);
-	}
-	@Test
 	public void givenEmployees_WhenRetrievedByName_ShouldReturnTrue() {
 		List<Employee> employees = new ArrayList<>();
 		EmployeePayrollService eService = new EmployeePayrollService();

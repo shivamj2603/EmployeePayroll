@@ -23,12 +23,6 @@ public class EmployeePayrollService {
 	public EmployeePayrollService(List<Employee> list) {
 		this.employeeList = list;
 	}
-	public static void main(String[] args) {
-		ArrayList<Employee> list = new ArrayList<Employee>();
-		EmployeePayrollService eService = new EmployeePayrollService(list);
-		eService.readEmployeePayrollData(IOService.FILE_IO);
-		eService.writeData(IOService.CONSOLE_IO);
-	}
 	/**
 	 * Usecase 4
 	 * Write data to a file
@@ -146,15 +140,18 @@ public class EmployeePayrollService {
 		}
 		return entries;
 	}
+	//delete employee from payroll
 	public List<Employee> deleteEmployee(String name) throws DatabaseException {
 		employeePayrollDBService.deleteEmployee(name);
 		return readEmployeePayrollData(IOService.DB_IO);
 	}
+	//remove employee from active database
 	public List<Employee> removeEmployeeFromPayroll(int id) throws DatabaseException {
 		List<Employee> activeEmployees = null;
 		activeEmployees = employeePayrollDBService.removeEmployeeFromCompany(id);
 		return activeEmployees;
 	}
+	//Add Employees to payroll
 	public void addEmployeesToPayroll(List<Employee> asList) {
 		employeeList.forEach(employee -> {
 			System.out.println("Employee Being added: "+employee.name);
@@ -167,6 +164,7 @@ public class EmployeePayrollService {
 		});
 		System.out.println(this.employeeList);
 	}	
+	//Add Employees to payroll with thread
 	public void addEmployeesToPayrollWithThreads(List<Employee> employeeDataList) {
 		Map<Integer, Boolean> employeeAdditionStatus = new HashMap<Integer, Boolean>();
 		employeeDataList.forEach(employee -> {
@@ -193,38 +191,9 @@ public class EmployeePayrollService {
 			}
 		}
 	}
-	public void updatePayroll(Map<String, Double> salaryMap) {
-		Map<Integer, Boolean> employeeAdditionStatus = new HashMap<Integer, Boolean>();
-		salaryMap.forEach((k,v) -> {
-			Runnable task = () -> {
-				employeeAdditionStatus.put(k.hashCode(), false);
-				LOG.info("Employee Being Added: "+ Thread.currentThread().getName());
-				try {
-					this.updatePayrollDB(k,v);
-				} catch (DatabaseException | SQLException e) {
-					e.printStackTrace();
-				} 
-				employeeAdditionStatus.put(k.hashCode(), true);
-				LOG.info("Employee Added: "+ Thread.currentThread().getName());
-			};
-			Thread thread = new Thread(task, k);
-			thread.start();
-		});
-		while(employeeAdditionStatus.containsValue(false)) {
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException exception) {
-				exception.printStackTrace();  
-			}
-		}
-	}
-	public void updatePayrollDB(String name, Double salary) throws DatabaseException, SQLException {
-		int result = employeePayrollDBService.updateEmployeeData(name, salary);
-		if (result == 0)
-			return;
-		Employee employee = this.getEmployee(name);
-		if (employee != null)
-			employee.salary = salary;
+	//add employee to native list
+	public void addEmployeeToPayroll(Employee employee) {
+		employeeList.add(employee);
 	}
 	public boolean checkEmployeeListSync(List<String> nameList) throws DatabaseException {
 		List<Boolean> resultList = new ArrayList<>();
@@ -240,8 +209,30 @@ public class EmployeePayrollService {
 		}
 		return true;
 	}
-	public void addEmployeeToPayroll(Employee employee) {
-		employeeList.add(employee);
+	public void updatePayroll(Map<String, Double> salaryMap) {
+		Map<Integer, Boolean> employeeAdditionStatus = new HashMap<Integer, Boolean>();
+		salaryMap.forEach((k,v) -> {
+			Runnable task = () -> {
+				employeeAdditionStatus.put(k.hashCode(), false);
+				LOG.info("Employee Being Added: "+ Thread.currentThread().getName());
+				try {
+					this.updateEmployeeSalary(k,v);
+				} catch (DatabaseException e) {
+					e.printStackTrace();
+				} 
+				employeeAdditionStatus.put(k.hashCode(), true);
+				LOG.info("Employee Added: "+ Thread.currentThread().getName());
+			};
+			Thread thread = new Thread(task, k);
+			thread.start();
+		});
+		while(employeeAdditionStatus.containsValue(false)) {
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException exception) {
+				exception.printStackTrace();  
+			}
+		}
 	}
 	public void deleteEmployee(String name, IOService ioService) {
 		if(ioService.equals(IOService.REST_IO)) {
